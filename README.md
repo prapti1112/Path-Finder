@@ -1,11 +1,11 @@
 # Path-Finder
-This repository consists of implementations of different path finding algorithms in python using pygame
+This repository consists of implementations of different path finding algorithms in C++ using olcConsoleEngine
 <br><br>
 
 ## Requirement:
 <ul>
-<li> python 3.x </li>
-<li> pygame </li>
+<li> C++ </li>
+<li> <a href="https://github.com/OneLoneCoder/videos/blob/master/olcConsoleGameEngine.h"> olcConsoleGameEngine </a> </li>
 </ul>
 <br>
 

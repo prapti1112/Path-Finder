@@ -5,8 +5,14 @@ This repository consists of implementations of different path finding algorithms
 ## Requirement:
 <ul>
 <li> C++ </li>
+<li> Visual Studio (ide) </li>
 <li> <a href="https://github.com/OneLoneCoder/videos/blob/master/olcConsoleGameEngine.h"> olcConsoleGameEngine </a> </li>
 </ul>
+<br>
+
+## Implementation
+To execute the implementation open the *.sln file in Visual Studio and build using <b>Ctrl+B</b>
+
 <br>
 
 ## Algorithms used:

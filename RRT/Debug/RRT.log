@@ -1,0 +1,15 @@
+﻿  Source.cpp
+C:\Python\Python Scripts\Path Finder\C++ code\RRT\Source.cpp(85,35): warning C4244: '=': conversion from '_Ty1' to 'int', possible loss of data
+          with
+          [
+              _Ty1=float
+          ]
+C:\Python\Python Scripts\Path Finder\C++ code\RRT\Source.cpp(100,18): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Python\Python Scripts\Path Finder\C++ code\RRT\Source.cpp(111,46): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Python\Python Scripts\Path Finder\C++ code\RRT\Source.cpp(122,30): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Python\Python Scripts\Path Finder\C++ code\RRT\Source.cpp(123,47): warning C4244: '=': conversion from '_Ty1' to 'int', possible loss of data
+          with
+          [
+              _Ty1=float
+          ]
+  RRT.vcxproj -> C:\Python\Python Scripts\Path Finder\C++ code\RRT\Debug\RRT.exe

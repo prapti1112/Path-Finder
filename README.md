@@ -15,9 +15,9 @@ This repository consists of implementations of different path finding algorithms
 ``` diff
 1. Select a random point 
 
-2. Find the nearest neighbour of the point selected point random point 
+2. Find the nearest neighbour of the selected point random point 
 
-3. for i: 0 -> n (n -> number of points to be randomely chossen in one pass)
+3. for i: 0 -> n (n -> number of points to be randomly chosen in one pass)
     if distance between randomly chosen point is more than the preset step size find a distination point
     check if path between destination point and nearest neighbour is obstructed
       yes -> choose a new point randomly
@@ -29,6 +29,11 @@ This repository consists of implementations of different path finding algorithms
               if the distance between destination node and end node is less than the limit
                    connect destination node and end node and return to main
     Select a new random point 
-    Find the nearest neighbour of the point selected point random point 
+    Find the nearest neighbour of the selected point random point 
 ```
 <br>
+
+## Implementation demos:
+
+### Rapidly exploring random trees
+![RRT demo](https://github.com/prapti1112/Path-Finder/blob/python/videos/RRT%20implementaion.gif)

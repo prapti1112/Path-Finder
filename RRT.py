@@ -62,51 +62,6 @@ def createUIWalls():
             wall.append([x, y])
 
 
-def createSafetyWalls():
-    
-    # safety around horizontal walls
-    for x in range(windowWidth):
-        for y in range(wallThickness, 3*wallThickness):
-            safetyWalls.append([x, y])
-            safetyWalls.append([windowHeight-x, windowWidth-y])
-    
-    # safety around verticle walls
-    for x in range(wallThickness, 3*wallThickness):
-        for y in range(windowHeight):
-            safetyWalls.append([x, y])
-            safetyWalls.append([windowHeight-x, windowWidth-y])
-
-    # safety around middle horizontal
-    for x in range(450 + 2*wallThickness):
-        for y in range(260 - 2*wallThickness, 260):
-            safetyWalls.append([x, y])
-        for y in range(260 + wallThickness, 260 + 3*wallThickness):
-            safetyWalls.append([x, y])
-    for x in range(450, 450 + 2*wallThickness):
-        for y in range(260, 260 + 2*wallThickness):
-            safetyWalls.append([x, y])
-    
-    # safety around top vertical wall
-    for y in range(150 + 2*wallThickness):
-        for x in range(220 - 2*wallThickness, 220):
-            safetyWalls.append([x, y])
-        for x in range(220 + wallThickness, 220 + 3*wallThickness):
-            safetyWalls.append([x, y])
-    for x in range(220 - wallThickness, 220 + wallThickness):
-        for y in range(150, 150 + 2*wallThickness):
-            safetyWalls.append([x, y])
-    
-    # safety around bottom vertical wall
-    for y in range(windowHeight - 240 - 2*wallThickness, windowHeight):
-        for x in range(380 - 2*wallThickness, 380):
-            safetyWalls.append([x, y])
-        for x in range(380 + wallThickness, 380 + 3*wallThickness):
-            safetyWalls.append([x, y])
-    for x in range(380, 380 + 2*wallThickness):
-        for y in range(windowHeight - 240 - wallThickness, windowHeight - 240):
-            safetyWalls.append([x, y])
-
-
 def distance(point1, point2):
     return sqrt((point1[0] - point2[0])**2 + (point1[1] - point2[1])**2)
 
@@ -241,7 +196,6 @@ if __name__ == "__main__":
     openList.append(startNode)
 
     createUIWalls()
-    # createSafetyWalls()
 
     time.sleep(5)
 
@@ -251,10 +205,6 @@ if __name__ == "__main__":
                 running = False
             
         surface.fill(colors["white"])
-        
-        # Drawing safety walls
-        # for obstacle in safetyWalls:
-        #     surface.set_at(tuple(obstacle), colors["light_grey"])
         
         # Drawing walls
         for obstacle in wall:

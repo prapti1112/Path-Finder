@@ -112,7 +112,7 @@ def distance(point1, point2):
 
 
 def getLineParameters(point1, point2):
-    if point1[0] == point2[0]:
+    if abs(point1[0] - point2[0]) < 8:
         slope = float('inf')
         intercept = -1 * point1[0]
         return [slope, intercept]
@@ -129,13 +129,13 @@ def pathIsObstructed(destinationPoint, neighbour):
     if lineParameters[0] == float('inf'):
         print("checking for slat lines")
         for y in range(min(int(destinationPoint[1]), neighbour[1])-nodeRadius, max(int(destinationPoint[1]), neighbour[1])+nodeRadius):
-            if [neighbour[0], y] in wall or [neighbour[0], y] in safetyWalls:
+            if [neighbour[0], y] in wall: # or [neighbour[0]-nodeRadius//2,  y] in wall or [neighbour[0]+nodeRadius//2,  y] in wall or [neighbour[0],  y-nodeRadius//2] in wall or [neighbour[0],  y+nodeRadius//2] in wall:
                 return True
     else:
         print("checking for a straight line")
         for x in range(min(int(destinationPoint[0]), neighbour[0])-nodeRadius, max(int(destinationPoint[0]), neighbour[0])+nodeRadius):
             new_y = lineParameters[0] * x + lineParameters[1]
-            if [x, int(new_y)] in wall or [neighbour[0], new_y] in safetyWalls:
+            if [x, int(new_y)] in wall or [x-nodeRadius//2,  int(new_y)] in wall or [x+nodeRadius//2,  int(new_y)] in wall or [x,  int(new_y)-nodeRadius//2] in wall or [x,  int(new_y)+nodeRadius//2] in wall:
                 return True
     
     return False
@@ -170,15 +170,23 @@ def solve_RRT():
 
     global isPaused
 
-    limit = 80
+    upperLimit, lowerLimit = 80, 30
     currentPoint = [random.randint(0, windowWidth), random.randint(0, windowHeight)]
     nearestNeighbour = getNearestNeighbour(currentPoint)
 
-    for i in range(2):
+    for i in range(5):
         print(f"Current point: {currentPoint}, Neighbour: {nearestNeighbour.coordinates}")
         pygame.draw.circle(surface, colors["pink"], currentPoint, nodeRadius, 0)
 
-        destinationPoint = getDestinationPoint(currentPoint, nearestNeighbour.coordinates, limit)
+        if distance(currentPoint, nearestNeighbour.coordinates) < lowerLimit:
+            pygame.draw.line(surface, colors["grey"], currentPoint, nearestNeighbour.coordinates, 2)
+                    
+            currentPoint = [random.randint(0, windowWidth), random.randint(0, windowHeight)]
+            nearestNeighbour = getNearestNeighbour(currentPoint)
+            print("New current point found")
+            continue
+
+        destinationPoint = getDestinationPoint(currentPoint, nearestNeighbour.coordinates, upperLimit)
         pygame.draw.circle(surface, colors["orange"], destinationPoint, nodeRadius, 0)
         print(f"Destination: {destinationPoint}")
 
@@ -215,7 +223,7 @@ def solve_RRT():
             destinationNode.parent = nearestNeighbour
 
             print(destinationNode.coordinates, type(destinationNode.coordinates), endNode.coordinates, type(endNode.coordinates))
-            if distance(destinationNode.coordinates, endNode.coordinates) < limit:
+            if distance(destinationNode.coordinates, endNode.coordinates) < upperLimit:
                 isPaused = True
                 print(destinationNode.coordinates, type(destinationNode.coordinates), endNode.coordinates, type(endNode.coordinates), distance(destinationNode.coordinates, endNode.coordinates))
                     # print("Node nearest end found: " + str(destinationNode.coordinates))
@@ -233,7 +241,7 @@ if __name__ == "__main__":
     openList.append(startNode)
 
     createUIWalls()
-    createSafetyWalls()
+    # createSafetyWalls()
 
     time.sleep(5)
 

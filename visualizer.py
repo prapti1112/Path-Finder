@@ -31,6 +31,10 @@ class Visualizer:
                 # print(f"Length: {len(map)}, {len(map[0])}, {map[x//self.blockSize][y//self.blockSize]}")
                 if self.map[x//self.blockSize][y//self.blockSize].status == "obstacle":
                     nodeColor = self.colors["black"]
+                elif self.map[x//self.blockSize][y//self.blockSize].status == "start":
+                    nodeColor = self.colors["green"]
+                elif self.map[x//self.blockSize][y//self.blockSize].status == "goal":
+                    nodeColor = self.colors["red"]
                 elif self.map[x//self.blockSize][y//self.blockSize].status == "visited":
                     nodeColor = self.colors["yellow"]
                 elif self.map[x//self.blockSize][y//self.blockSize].status == "path":
@@ -47,9 +51,11 @@ class Visualizer:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return False
-            if event.type == pygame.MOUSEBUTTONDOWN:
+            elif event.type == pygame.MOUSEBUTTONDOWN:
                 print(f"Mouse clicked - {event.pos[0]}, {event.pos[1]}, Node: {self.map[int(event.pos[0]/self.blockSize)][int(event.pos[1]/self.blockSize)]}")
                 self.map[int(event.pos[0]/self.blockSize)][int(event.pos[1]/self.blockSize)].status = "obstacle" if self.map[int(event.pos[0]/self.blockSize)][int(event.pos[1]/self.blockSize)].status in ["unvisited", "path", "visited"] else "unvisited"
+            
+
         self.drawMap()
 
         pygame.display.update()

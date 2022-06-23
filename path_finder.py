@@ -30,26 +30,41 @@ class PathFinder:
     def findPath(self):
         
         while self.running:
-            if self.solver == 'A_star':        
-                sys_path.append(getcwd() + '/algorithms/')
+            sys_path.append(getcwd() + '/algorithms/')
+            if self.solver == 'A_star':                        
                 import a_star
                 self.solver = a_star.A_star(startCoordinate, goalCoordinate)
+            elif self.solver == 'RRT':
+                import rrt
+                self.solver = rrt.RRT(startCoordinate, goalCoordinate)
             
             self.running = Visualizer(self.map, 30).run()
             
             self.path, self.map = self.solver.getPath(self.map, self.start, self.goal)
-            self.updatePathStatus()
+            
+            if len(self.path):
+                self.updatePathStatus()
             
             sleep(0.5)
           
 
+def initialiseMap(map):
+    
+    obstacles = [[x, y] for x in range(4,7) for y in range(2, 5)] + [[x, y] for x in range(13,16) for y in range(2, 5)] + [[x, y] for x in range(4, 7) for y in range(8, 11)] + [[x, y] for x in range(4, 7) for y in range(8, 11)] + [[x, y] for x in range(13,16) for y in range(8, 11)] + [[x, y] for x in range(4, 7) for y in range(14, 17)] + [[x, y] for x in range(13, 16) for y in range(14, 17)]
+    
+    for o in obstacles:
+        map[o[0]][o[1]].status = "obstacle"
+    
+    return map
+        
 
 if __name__ == "__main__":
 
     map = [[node.Node(x, y) for y in range(20)] for x in range(20)]
-    startCoordinate, goalCoordinate = [3, 5], [9, 9]
+    startCoordinate, goalCoordinate = [3, 5], [15, 18]
 
     map[startCoordinate[0]][startCoordinate[1]].status, map[goalCoordinate[0]][goalCoordinate[1]].status = "start", "goal"
+    map = initialiseMap(map)
 
-    path_finder = PathFinder('A_star', map, startCoordinate, goalCoordinate, 30)
+    path_finder = PathFinder('RRT', map, startCoordinate, goalCoordinate, 30)
     path_finder.findPath()

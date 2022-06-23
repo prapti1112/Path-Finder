@@ -10,7 +10,7 @@ class A_star:
     
     def assignHeuristics(self):
         '''
-        Assigns the inintial hueristic vallues
+        Assigns the inintial hueristic values. Initial h, g = infinity except for the start and goal positions.
         '''
         for x in range(len(self.map)):
             for y in range(len(self.map[0])):
@@ -26,6 +26,9 @@ class A_star:
         self.map[self.goal[0]][self.goal[1]].h = 0
 
     def getNeighbours(self, node):
+        ''' Returns the unoccupied neighbours of a given node
+        @param: node - current node whose neighbours are to be found
+        '''
         neighbors = []
         x, y = node.x, node.y
         

@@ -3,7 +3,7 @@ from time import sleep
 import pygame
 
 class Visualizer:
-    def __init__(self, map, blockSize = 10, title = "GRID") -> None:
+    def __init__(self, cellCount, blockSize = 10, title = "GRID") -> None:
         ''' Initialises all the necessary variables required for the pygame console
             @param: map (List<lists>) - A list of lists containing the Node objects of a map
             @param: blockSize(int) - the size each block would occupy in the pygame window
@@ -12,11 +12,11 @@ class Visualizer:
         pygame.init()
         self.running = True
         self.colors = {"black": (0, 0, 0), "white": (255, 255, 255), "grey_black": (79, 79, 79), "red": (255, 0, 0), "green": (0, 255, 0), "orange": (255, 168, 46), "purple": (169, 103, 235), "pink": (255, 79, 158), "grey": (158, 158, 158), "light_grey": (173, 173, 173), "yellow": (255, 238, 0)}
-        
-        self.blockSize = blockSize
+
+        self.blockSize = 600 // cellCount
         self.surface = pygame.display.set_mode((600, 600))
         pygame.display.set_caption(str(title))
-        self.map = map
+        self.map = []
     
     def drawMap(self):
         ''' Draws and updates the map UI
@@ -44,10 +44,12 @@ class Visualizer:
                     nodeSize = 2
                 pygame.draw.rect(self.surface,  nodeColor, pygame.Rect(x, y, self.blockSize, self.blockSize), nodeSize)
     
-    def run(self):
+    def run(self, map):
         ''' Displays the latest map with changes after every 0.2 secs
         '''
         
+        self.map = map
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return False

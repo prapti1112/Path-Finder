@@ -4,27 +4,54 @@ from time import sleep
 import node
 
 class RRT:
-    def __init__(self, start = [], goal = [], randomNodeDistanceLimit = 6, cellCount = 20) -> None:
+    def __init__(self, start = [], goal = [], randomNodeDistanceLimit = 12, cellCount = 20) -> None:
         print("Hello from RRT")
         self.start = start
         self.goal = goal
         self.limit = randomNodeDistanceLimit
         self.open = []
         self.cellCount = cellCount
-        self.iterations = 100
+        self.iterations = 20000
     
 
     def recountPath(self):
         ''' Reconstructs the path from the graph nodes available
         '''
         pathPositionNode = self.map[self.goal[0]][self.goal[1]]
-        print("Current path:")
-        while pathPositionNode != self.map[self.start[0]][self.start[1]]:
-            print(f"{pathPositionNode}, {pathPositionNode.__dict__.keys()}")
-        #     self.path.append(pathPosition)
-            pathPositionNode = self.map[pathPositionNode.x][pathPositionNode.y].parent
-        #     pathPositionNode
-        # self.path.reverse()
+        # print(f"Current path: {pathPositionNode}, {pathPositionNode.parent}") #, {pathPositionNode == self.map[self.start[0]][self.start[1]]}")
+        print("Path: ")
+        i = 0
+        while not (pathPositionNode == self.map[self.start[0]][self.start[1]]) and hasattr(pathPositionNode, 'parent'):
+            # i += 1
+            # print(f"{i}. {pathPositionNode}")
+            if pathPositionNode.y == pathPositionNode.parent[1]:
+                y = pathPositionNode.y
+                for x in range(max(pathPositionNode.x, pathPositionNode.parent[0])-1, min(pathPositionNode.x, pathPositionNode.parent[0]), -1):
+                    # print(f"({x}, {y}) - status: {self.map[x][y].status}")
+                    if self.map[x][y].status != "obstacle":
+                        self.path.append(self.map[x][y])
+            else:
+                slope = float('inf') if pathPositionNode.x == pathPositionNode.parent[0] else ( (pathPositionNode.y - pathPositionNode.parent[1]) / (pathPositionNode.x - pathPositionNode.parent[0]) )
+                intercept = pathPositionNode.y - slope * pathPositionNode.x
+                
+                for x in range(max(pathPositionNode.x, pathPositionNode.parent[0])-1, min(pathPositionNode.x, pathPositionNode.parent[0]), -1):
+                    y = int(slope * x + intercept)
+                    # print(f"({x}, {y}) - status: {self.map[x][y].status}")
+                    if self.map[x][y].status != "obstacle":
+                        self.path.append(self.map[x][y])
+            
+            self.path.append(self.map[pathPositionNode.parent[0]][pathPositionNode.parent[1]])
+            pathPositionNode = self.map[pathPositionNode.parent[0]][pathPositionNode.parent[1]]
+            # print(f"Current Node: {pathPositionNode}, Parent location: {pathPositionNode.parent}, Parent Node: {self.map[pathPositionNode.parent[0]][pathPositionNode.parent[1]]}")
+            # return
+        self.path.reverse()
+        self.path.append(self.map[self.goal[0]][self.goal[1]])
+        # print(f"Open: {[[node.x, node.y] for node in self.open]}")
+        print(f"Path: {[[node.x, node.y] for node in self.path]}")
+
+        # if self.path[0] != self.map[self.start[0]][self.start[1]]:
+        #     self.path = []
+        
 
 
     def distance(self, point1, point2):
@@ -38,7 +65,7 @@ class RRT:
         @param: current - The node whose neighbour is to be found
         '''
         neighbour = sorted([[self.distance((node.x, node.y), current), node.x, node.y] for node in self.open], key=lambda x: x[0])[0][1:]
-        print(f"Neighbour found: {neighbour}")
+        # print(f"Neighbour found: {neighbour}")
         return neighbour
     
     def pathIsObstructed(self, destination, neighbour):
@@ -46,13 +73,13 @@ class RRT:
         @param: destination - New destination node to be added to the graph
         @param: neighbour - node in the open list closest to the destination node
         '''
-        print(f"Destination: {destination} Neighbour: {neighbour}")
+        # print(f"Destination: {destination} Neighbour: {neighbour}")
         slope = float('inf') if destination[0] == neighbour[0] else ( (destination[1] - neighbour[1]) / (destination[0] - neighbour[0]) )
         
         if slope == float('inf'):
             print("Straight line detected")
             for y in range(min(destination[1], neighbour[1]), max(destination[1], neighbour[1])+1 ):
-                print(f"Checking for obstacle at ({int(destination[0])}, {int(y)})")
+                # print(f"Checking for obstacle at ({int(destination[0])}, {int(y)})")
                 if self.map[int(destination[0])][int(y)].status == "obstacle":
                     return True
         else:
@@ -60,7 +87,7 @@ class RRT:
             intercept = neighbour[1] - slope * neighbour[0]
             for x in range(min(destination[0], neighbour[0])+1, max(destination[0], neighbour[0])+1):
                 y = int(slope * x + intercept)
-                print(f"Checking for obstacle at ({x}, {y})")
+                # print(f"Checking for obstacle at ({x}, {y})")
                 if self.map[x][y].status == "obstacle":
                     return True
         
@@ -81,9 +108,9 @@ class RRT:
         x_possible = [int(neighbour[0] + (self.limit / sqrt(1 + slope**2))), int(neighbour[0] - (self.limit / sqrt(1 + slope**2)))]
         destinationX = int(x_possible[0]) if min(current[0], neighbour[0]) < x_possible[0] < max(current[0], neighbour[0]) else int(x_possible[1])
         destination.append( destinationX )
-        multiplier = (current[1] - neighbour[1])/(abs(current[1] - neighbour[1]))
-        destination.append( neighbour[1] + multiplier*self.limit if slope == float('inf') else int(neighbour[1] - slope*(neighbour[0] - destinationX)) )
-        print(f"Destination: {destination}")
+        multiplier = 0 if abs(current[1] - neighbour[1]) == 0 else (current[1] - neighbour[1])/(abs(current[1] - neighbour[1]))
+        destination.append( int(self.limit) if abs(current[1] - neighbour[1]) == 0 else int(neighbour[1] + multiplier*self.limit) if slope == float('inf') else int(neighbour[1] - slope*(neighbour[0] - destinationX)) )
+        # print(f"Destination: {destination}")
 
         return destination
     
@@ -126,13 +153,17 @@ class RRT:
                     self.map[nearestNeighbor[0]][nearestNeighbor[1]].children = [destination]
 
                 self.map[destination[0]][destination[1]].parent = nearestNeighbor
-                self.map[destination[0]][destination[1]].status = "visited"
+                self.map[destination[0]][destination[1]].status = "visited" if self.map[destination[0]][destination[1]].status != "obstacle" else "obstacle"
                 self.open.append(self.map[destination[0]][destination[1]])
 
-                print(f"Distance between destination and end: {self.distance(destination, self.goal)}")
+                # print(f"Distance between destination and end: {self.distance(destination, self.goal)}")
                 if self.distance(destination, self.goal) < self.limit:
                     print("Node close to goal found....")
-                    self.map[destination[0]][destination[1]].children.append(self.goal)
+                    if hasattr(self.map[destination[0]][destination[1]], 'children'):
+                        self.map[destination[0]][destination[1]].children.append(self.goal)
+                    else:
+                        self.map[destination[0]][destination[1]].children = [self.goal]
+                    # self.map[destination[0]][destination[1]].children.append(self.goal)
                     self.map[self.goal[0]][self.goal[1]].parent = destination
                     break
 
@@ -140,9 +171,10 @@ class RRT:
                 nearestNeighbor = self.getNearestNeighbour(current)
 
             sleep(1)
-
         else:
             print("Path not found ")
-        self.recountPath()
+        
+        if hasattr(self.map[self.goal[0]][self.goal[1]], 'parent'):
+            self.recountPath()
 
         return self.path, self.map

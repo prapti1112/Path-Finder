@@ -95,7 +95,7 @@ class Q_Learning:
         
 
     def train(self):
-        for episode in range(1000):
+        for episode in range(self.cellCount*1000):
         #get the starting location for this episode
             row_index, column_index = self.get_random_location()
 
